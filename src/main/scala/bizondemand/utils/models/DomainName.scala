@@ -48,43 +48,46 @@ Read more: http://www.faqs.org/rfcs/rfc1034.html#ixzz0rDFc3BjL
 */
 case class DomainName(subdomains:List[String]) {
 
+	lazy val tld = subdomains.last
+	
+	lazy val site = subdomains.dropRight(1).last
 
 }
 
-object DomainName extends RegexParsers with RunParser{
+object DomainName extends RegexParsers with RunParser with Log{
 		
 	
 	//<letter> ::= any one of the 52 alphabetic characters A through Z in
 	//upper case and a through z in lower case
 	lazy val letter :Parser[Any] = {
-		println("letter")
+		trace("letter")
 		elem("letter", Character.isLetter)		
 	}
 
 	//<digit> ::= any one of the ten digits 0 through 9
 	lazy val digit :Parser[Any]= {
-		println("digit") 
+		trace("digit") 
 		elem("digit", Character.isDigit)	
 	}
 	
 	val dash ="-"
 	
 	lazy val dot: Parser[Any] = {
-		println("dot")
+		trace("dot")
 		elem("dot", (c => {c == '.'}))
 	}
 		
 	//<let-dig> ::= <letter> | <digit>
 	lazy val let_dig : Parser[Any] =  {
-		println("let_dig")
+		trace("let_dig")
 		letter | digit 	
 	}
 	
 	//<let-dig-hyp> ::= <let-dig> | "-"
 	lazy val let_dig_hyp:Parser[Any] = {
-		println("let_dig_hyp") 
+		debug("let_dig_hyp") 
 		let_dig ^^ { case ld => {
-			println("let_dig_hyp ld: " + ld)
+			debug("let_dig_hyp ld: " + ld)
 			ld
 		}} | 
 		"-" ^^^ dash		
@@ -92,14 +95,14 @@ object DomainName extends RegexParsers with RunParser{
 	
 	//<ldh-str> ::= <let-dig-hyp> | <let-dig-hyp> <ldh-str>
 	lazy val ldh_str:Parser[Any] = {
-		println("ldh_str")
+		debug("ldh_str")
 		let_dig_hyp ^^ {case s => {
-			println("ldh_str s: " + s.toString)
+			debug("ldh_str s: " + s.toString)
 			s.toString
 		}} | 
 		let_dig_hyp ~ ldh_str ^^ {
 			case r ~ s => {
-				println("ldh_str let_dig_hyp + ldh_str: " +r.toString + s.toString)
+				debug("ldh_str let_dig_hyp + ldh_str: " +r.toString + s.toString)
 				r.toString + s.toString
 			}
 		}	
@@ -107,48 +110,44 @@ object DomainName extends RegexParsers with RunParser{
 
 	//<label> ::= <letter> [ [ <ldh-str> ] <let-dig> ]
 	lazy val label :Parser[String] = {
-		println("label") 
+		debug("label") 
 		letter ~ (ldh_str*) ^^ { case let ~ ldh => {
-			println("label let: " + let + " ldh: " + ldh.mkString )
+			debug("label let: " + let + " ldh: " + ldh.mkString )
 			let.toString + ldh.mkString 
 		}}		
 	}
 	
 	//<subdomain> ::= <label> | <subdomain> "." <label>
 	lazy val subdomain:Parser[List[String]] = {
-		println("subdomain")
-		// label ^^ {case l => {
-		// 			println("subdomain label: " + l.toString)
-		// 			l.toString::Nil
-		// 		}} |
-		label ~ rep(dot ~ subdomain) ^^ {			
-			case l ~ Nil => {
-				println("#####subdomain l ~ Nil: " + l.toString + " ~ Nil" + " -- " + l.toString::Nil )
+		debug("subdomain")		
+		label ~ opt(dot ~ subdomain) ^^ {			
+			case l ~ None => {
+				debug("subdomain l ~ None: " + l.toString + " ~ None" + " -- " + (l.toString::Nil).toString )
 				l.toString::Nil
 			}	
-			case l ~ r => {
-				println("subdomain l ~ r: " + l + " ~ " + r.mkString + " -- " + (l.toString :: r :: Nil).asInstanceOf[List[String]])
-				(l :: r :: Nil).asInstanceOf[List[String]]
+			case l ~ Some(d ~ s) => {
+				debug("subdomain l ~ dot ~ s: " + l + " ~ " + d + " ~ " +s)
+				l :: s
 			}	
 		}
 	}
 		
 	//<domain> ::= <subdomain> | " "
 	lazy val domain : Parser[DomainName] = {
-		println("domain")
+		debug("domain")
 		subdomain  ^^ { case s => {
-			println("domain " + s.toString)
+			debug("domain " + s.toString)
 			DomainName( s )
 		}} | 
 		" " ^^ {case s => {
-			println("domain " + s.toString)
+			debug("domain " + s.toString)
 			DomainName(Nil)
 		}}			
 	}
 	
 	
-	type RootType = String
+	type RootType = DomainName
 	
-	def root = label
+	def root = domain
 	
 }
