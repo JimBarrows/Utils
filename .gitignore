@@ -1,6 +1,5 @@
 *~
 *.bak
-build
 *.class
 .classpath
 .CVS
@@ -25,6 +24,7 @@ null
 *.old
 .project
 project/boot
+project/build/target
 rebel.xml
 *.releaseBackup
 release.properties
