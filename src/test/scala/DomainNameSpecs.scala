@@ -4,7 +4,7 @@ import org.specs._
 import scala.util.parsing.combinator._
 import scala.util.parsing.combinator.syntactical._
 
-import  bizondemand.utils.models.DomainName
+import  bizondemand.utils.models.internet.DomainName
 
 class DomainNameSpecs extends Specification {
 	
@@ -53,6 +53,11 @@ class DomainNameSpecs extends Specification {
 		"return google as the site for www.google.com" in {
 			val domainName = DomainName("www"  :: "google" :: "com" :: Nil)
 			domainName.site must be_==("google")
+		}
+		
+		"return www.google.com as a string" in {
+			val domainName = DomainName("www"  :: "google" :: "com" :: Nil)
+			domainName.toString must be_==("www.google.com")
 		}
 	}
 	

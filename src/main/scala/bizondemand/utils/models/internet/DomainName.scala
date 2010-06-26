@@ -1,4 +1,4 @@
-package bizondemand.utils.models
+package bizondemand.utils.models.internet
 
 import _root_.bizondemand.utils.logging.Log
 import scala.util.parsing.combinator._
@@ -51,6 +51,8 @@ case class DomainName(subdomains:List[String]) {
 	lazy val tld = subdomains.last
 	
 	lazy val site = subdomains.dropRight(1).last
+	
+	override def toString = subdomains.mkString("",".","")
 
 }
 

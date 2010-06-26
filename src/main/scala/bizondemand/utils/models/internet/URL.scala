@@ -1,4 +1,4 @@
-package bizondemand.utils.models
+package bizondemand.utils.models.internet
 
 import _root_.bizondemand.utils.logging.Log
 import java.net.URLEncoder
@@ -18,7 +18,7 @@ case class Parameter(key: String, value: String) {
 class URL(protocol: String,
           username: Option[String],
           password: Option[String],
-          domainName: String,
+          domainName: DomainName,
           port: Option[Int], path: Option[List[String]], parameters: Option[List[Parameter]]) {
   def +&(param: Parameter) = addParam(param)
 
@@ -44,7 +44,7 @@ class URL(protocol: String,
     case _ => new URL(protocol, username, password, domainName, port, Some(path.getOrElse(Nil) ::: pathPartsList), parameters)
   }
 
-  def prependDomainName(name: String): URL = new URL(protocol, username, password, name + "." + domainName, port, path, parameters)
+  def prependDomainName(name: String): URL = new URL(protocol, username, password, DomainName( name :: domainName.subdomains), port, path, parameters)
 
   override def toString = protocol + "://" + username.getOrElse("") + (if (password.isDefined) ":" else "") + password.getOrElse("") + (if (username.isDefined) "@" else "") +
           domainName +
@@ -70,7 +70,7 @@ object URL extends Log{
     new URL(parsed.getProtocol,
       username,
       password,
-      parsed.getHost,
+      DomainName.run(parsed.getHost).getOrElse(DomainName(""::Nil)),
       if( parsed.getPort < 0) None else Some(parsed.getPort),
       if (parsed.getPath == null || parsed.getPath.isEmpty) None else Some(parsed.getPath.split("/").toList.drop(1)),
       if (parsed.getQuery == null || parsed.getQuery.isEmpty)
@@ -82,6 +82,6 @@ object URL extends Log{
   }
 }
 
-object LocalHost80 extends URL("http", None, None, "localhost", None, None, None)
+object LocalHost80 extends URL("http", None, None, DomainName("localhost"::Nil), None, None, None)
 
-object LocalHost8080 extends URL("http", None, None, "localhost", Some(8080), None, None)
+object LocalHost8080 extends URL("http", None, None, DomainName("localhost"::Nil), Some(8080), None, None)
