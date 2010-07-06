@@ -15,11 +15,13 @@ import java.net.{URL => JavaUrl}
 case class Parameter(key: String, value: String) {
   override def toString = URLEncoder.encode(key) + "=" + URLEncoder.encode(value)
 }
-class URL(protocol: String,
+case class URL(protocol: String,
           username: Option[String],
           password: Option[String],
           domainName: DomainName,
-          port: Option[Int], path: Option[List[String]], parameters: Option[List[Parameter]]) {
+          port: Option[Int], 
+          path: Option[List[String]], 
+          parameters: Option[List[Parameter]]) {
   def +&(param: Parameter) = addParam(param)
 
   def ++&(paramList: List[Parameter]) = addAllParams(paramList)

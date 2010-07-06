@@ -219,5 +219,17 @@ class UrlSpecs extends Specification {
         None)
       actual.toString must be_== (expected.toString)
     }
+    
+    "be able to determine if 2 URL's are the same" in {
+   		val actual = URL("http://localhost")
+     	val expected = new URL("http",
+        	None,
+	        None,
+    	    localhost,
+        	None,
+	        None,
+    	    None) 	
+    	actual must be_==( expected)
+    }
   }
 }
