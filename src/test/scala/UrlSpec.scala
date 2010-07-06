@@ -231,5 +231,32 @@ class UrlSpecs extends Specification {
     	    None) 	
     	actual must be_==( expected)
     }
+    
+    "be able to accept protocol, domainName, path and parameters only" in {
+    	val expected = URL("http://localhost/path/to/something?param1=val1")
+     	val actual = URL("http",        	
+    	    localhost,
+        	"path"::"to"::"something"::Nil,	        
+    	    Parameter("param1", "val1")::Nil
+    	    ) 	
+    	actual must be_==( expected)
+    }
+    
+    "be able to accept protocol, domainName, and path  only" in {
+    	val expected = URL("http://localhost/path/to/something")
+     	val actual = URL("http",        	
+    	    localhost,
+        	"path"::"to"::"something"::Nil
+    	    ) 	
+    	actual must be_==( expected)
+    }
+    
+     "be able to accept protocol, domainName, and path  only" in {
+    	val expected = URL("http://localhost")
+     	val actual = URL("http",        	
+    	    localhost
+    	    ) 	
+    	actual must be_==( expected)
+    }
   }
 }
