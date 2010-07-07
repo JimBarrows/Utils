@@ -12,9 +12,17 @@ import java.net.{URL => JavaUrl}
  *
  */
 
-case class Parameter(key: String, value: String) {
-  override def toString = URLEncoder.encode(key) + "=" + URLEncoder.encode(value)
+case class Parameter(key: String, value: String) {	
+	override def toString = URLEncoder.encode(key) + "=" + URLEncoder.encode(value)
 }
+
+object Parameter {
+	def apply( key:String, value:Int) :Parameter = Parameter(key, value.toString)
+	def apply( key:String, value:Long) :Parameter = Parameter(key, value.toString)
+	def apply( key:String, value:Float) :Parameter = Parameter(key, value.toString)
+	def apply( key:String, value:Double) :Parameter = Parameter(key, value.toString)	
+}
+
 
 
 
