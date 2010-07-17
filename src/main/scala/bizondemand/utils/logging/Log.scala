@@ -1,6 +1,7 @@
-package bizondemand.utils.logging
+package bizondemand.utils {
+package logging  {
 
-import org.slf4j.{LoggerFactory}
+import _root_.org.slf4j.LoggerFactory
 
 /**This code copied and pasted from http://johlrogge.wordpress.com/2009/06/27/loggingtools-in-scala/
  *
@@ -47,4 +48,6 @@ trait Log {
 
   def error(message: String, error: Throwable, values: Any*) =
     log.error(message, error, values.map(_.asInstanceOf[Object]).toArray)
+}
+}
 }
