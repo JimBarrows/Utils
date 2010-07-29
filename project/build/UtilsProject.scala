@@ -7,8 +7,8 @@ class UtilsProject(info: ProjectInfo) extends DefaultProject(info)
 	val scalaToolsRelease = ScalaToolsReleases
 	val scalaToolsSnapshots = ScalaToolsSnapshots
 	val javaNet = JavaNet1Repository	
-	def url = new java.net.URL("http://bizondemand.biz/artifacts")
-	val bizOnDemand = Resolver.url("BizOnDemand", url)
+	
+	val bizOnDemand = "BizOnDemand-release" at "http://bizondemand.biz/artifacts"
 		
 			
 	val jetty = "org.mortbay.jetty" % "jetty" % "6.1.22" % "test->default"
@@ -21,6 +21,7 @@ class UtilsProject(info: ProjectInfo) extends DefaultProject(info)
 		case "2.8.0" => "org.scala-tools.testing" %% "specs" % "1.6.5" % "test->default"
 	}
   	
+	override def managedStyle = ManagedStyle.Maven
   	val publishTo = Resolver.ssh("BizOnDemand", "bizondemand.biz", "/var/local/artifacts/release/")  	
 
 }
