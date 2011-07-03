@@ -28,6 +28,7 @@ class UtilsProject(info: ProjectInfo) extends DefaultProject(info)
 	val specs = buildScalaVersion match {
 		case "2.7.7" => "org.scala-tools.testing" % "specs" % "1.6.2.1" % "test->default"
 		case "2.8.0" => "org.scala-tools.testing" %% "specs" % "1.6.5" % "test->default"
+		case "2.9.0" => "org.scala-tools.testing" %% "specs" % "1.6.8" % "test->default"
 	}
   	
 }
